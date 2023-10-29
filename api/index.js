@@ -19,10 +19,11 @@ const salt = bcrypt.genSaltSync(saltRounds);
 app.use(cors({credentials:true,origin:'http://localhost:3000'}));
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(__dirname+'/uploads'))
 
 mongoose.connect(`mongodb+srv://${username_mongo}:${password_mongo}@blog.0nkw04p.mongodb.net/?retryWrites=true&w=majority`)
 
-app.post('/register', async (req,res) => {
+app.post('/register', async (req,res) => { 
     try{
         const { username,password } = req.body;
         const encryptedPassword = bcrypt.hashSync(password, salt);
@@ -40,33 +41,41 @@ app.post('/register', async (req,res) => {
 app.post('/login' , async (req,res) => {
     const { username , password } = req.body;
     const userDoc = await user.findOne({username});
-    const passOk = bcrypt.compareSync(password,userDoc.password);
-    if(passOk){
-        //login
-        jwt.sign({username,id: userDoc._id} , secret , {} , (err,token) => {
-            if(err){
-                throw err;
-            }
-            res.cookie('token',token).json({
-                username,
-                id: userDoc._id
-            });
-        })
-    }
+    
+    if(userDoc){
+        const passOk = bcrypt.compareSync(password,userDoc.password);
+        if(passOk){
+            //login
+            jwt.sign({username,id: userDoc._id} , secret , {} , (err,token) => {
+                if(err){
+                    throw err;
+                }
+                res.cookie('token',token).json({
+                    username,
+                    id: userDoc._id
+                });
+            })
+        }
+        else{
+            res.status(401).json({ message: "Wrong credentials" });
+        }
+    } 
     else{
-        res.status(400).json('wrong credentials');
-    }
+        res.status(401).json({ message: "Wrong credentials" });
+    }    
 })
 
 app.get('/profile', (req,res) => {
     const { token } = req.cookies;
-    jwt.verify(token , secret , {} , (err,info) => {
-        if(err){
-            throw err;
-        }
-        res.json(info);
-    })
-    res.json(req.cookies);
+    if(token){
+        jwt.verify(token , secret , {} , (err,info) => {
+            if(err){
+                throw err;
+            }
+            res.json(info);
+        })
+    }
+    res.status(401).json("No login found");
 })
 
 app.post('/logout', (req,res) => {
@@ -79,14 +88,31 @@ app.post('/post' , uploadMiddleware.single('file') , async (req,res) => {
     const ext = parts[parts.length - 1];
     const newPath =  path+'.'+ext;
     fs.renameSync(path , newPath);
-    const { title,summary,content } = req.body;
-    const PostDoc = await post.create({
-        title,
-        summary,
-        content,
-        cover: newPath
-    })
-    res.json({PostDoc})
+    const { token } = req.cookies;
+    if(token){
+        jwt.verify(token , secret , {} , async (err,info) => {
+            if(err){
+                throw err;
+            }
+            const { title,summary,content } = req.body;
+            const PostDoc = await post.create({
+                title,
+                summary,
+                content,
+                cover: newPath,
+                author: info.id
+            })
+            res.json({PostDoc})
+        })
+    }
+})
+
+app.get('/posts' , async (req,res) => {
+    let posts = await post.find()
+                          .populate('author' , ['username'])
+                          .sort({createdAt: -1})
+                          .limit(20);
+    res.json(posts);
 })
 
 app.listen(port);

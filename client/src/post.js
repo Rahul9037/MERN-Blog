@@ -1,17 +1,19 @@
+import { formatISO9075 ,format } from 'date-fns';
 
-export default function Post(){
+export default function Post({cover,author,updatedAt,summary,title}){
     return (
         <div className="post">
             <div className="image">
-                <img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Millets_1200x628.width-1600.format-webp.webp" alt="blog-image"/>
+                <img src={'http://localhost:4000/'+cover} alt="blog-image"/>
             </div>
             <div className="text">
-                <h2>Google for India 2023: Partnering India’s success in a new digital paradigm</h2>
+                <h2>{title}</h2>
                 <p className="info">
-                    <a className="author">Rahul</a>
-                    <time>2023-10-28 12:22</time>
+                    <a className="author">{author?.username}</a>
+                    {/* <time>{formatISO9075(new Date(updatedAt))}</time> */}
+                    <time>{format(new Date(updatedAt) , 'MMM d, yyyy HH:mm')}</time>
                 </p>
-                <p className="summary">With India looking at a billion connected people in the near future, the country’s digital journey is underpinned by the large strides it has taken in a short timespan by improving access and low cost data for everyone across the length and breadth of the country.</p>
+                <p className="summary">{summary}</p>
             </div>
         </div>
     )

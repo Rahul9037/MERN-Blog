@@ -7,7 +7,7 @@ export default function Login(){
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
     const [redirect,setRedirect] = useState(false);
-
+    const [error,setError] = useState(false);
     const { setUserInfo } = useContext(UserContest);
 
     const Login = async (e) => {
@@ -18,14 +18,15 @@ export default function Login(){
             headers: { 'Content-Type': 'application/json'},
             credentials: 'include'
         })
-
-        if(response.ok){
+        if(response.status == 200){
             let userDetails = await response.json();
             setUserInfo(userDetails);
             setRedirect(true)
         }
         else{
-            setRedirect(false)
+            let error = await response.json();
+            setRedirect(false);
+            setError(error?.message)
         }
     }
 
@@ -34,21 +35,24 @@ export default function Login(){
     }
 
     return (
-        <form className="login" onSubmit={Login}>
-            <h1>Login</h1>
-            <input 
-                type="text" 
-                placeholder="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-            />
-            <input 
-                type="password" 
-                placeholder="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <button>Login</button>
-        </form>
+        <>
+            <form className="login" onSubmit={Login}>
+                <h1>Login</h1>
+                <input 
+                    type="text" 
+                    placeholder="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+                <input 
+                    type="password" 
+                    placeholder="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <button>Login</button>
+            </form>
+            {error && <span className="error-message">{error}</span>}
+        </>
     )
 }
