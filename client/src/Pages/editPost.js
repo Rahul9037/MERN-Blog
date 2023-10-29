@@ -1,25 +1,39 @@
-import { useState } from 'react';
-import { Navigate } from "react-router-dom";
+import { useState,useEffect } from 'react';
+import { Navigate, useParams } from "react-router-dom";
 import Editor from '../editor';
 
-export default function CreatePost(){
+export default function EditPost(){
 
     const [content, setContent] = useState('');
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [files, setFiles] = useState(null);
     const [redirect,setRedirect] = useState(false);
+    const { id } = useParams();
 
-    const createNewPost = async (e) => {
+    useEffect( () => {
+        fetch(`http://localhost:4000/post/${id}`)
+        .then(resp => resp.json())
+        .then(post => {
+            setTitle(post.title);
+            setSummary(post.summary);
+            setContent(post.content);
+        });
+    },[])
+
+    const updatePost = async (e) => {
         e.preventDefault();
         const data = new FormData();
         data.set('title', title);
         data.set('summary', summary);
-        data.set('file', files[0]);
+        data.set('id', id);
+        if(files?.[0]){
+            data.set('file', files?.[0]);
+        }
         data.set('content', content);
 
         const response = await fetch('http://localhost:4000/post' , {
-            method: 'POST',
+            method: 'PUT',
             body: data,
             credentials:'include'
         })
@@ -32,11 +46,11 @@ export default function CreatePost(){
     }   
     
     if(redirect){
-        return <Navigate to={'/'}/>
+        return <Navigate to={'/post/'+id}/>
     }
 
     return (
-        <form onSubmit={createNewPost}>
+        <form onSubmit={updatePost}>
             <input 
                 className='title'
                 type="text" 
@@ -53,7 +67,7 @@ export default function CreatePost(){
             />
             <input type="file" onChange={e => setFiles(e.target.files)}/>
             <Editor value={content} onChange={setContent}/>
-            <button style={{marginTop: '10px'}}>Save</button>
+            <button style={{marginTop: '10px'}}>Update</button>
         </form>
     )
 }

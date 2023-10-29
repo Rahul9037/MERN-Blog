@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { UserContest } from "./UserContext";
+import { UserContext } from "./UserContext";
 
 export default function Header(){
 
-    const {setUserInfo, userInfo } = useContext(UserContest);
+    const {setUserInfo, userInfo } = useContext(UserContext);
 
     useEffect(() => {
         fetch('http://localhost:4000/profile' , {

@@ -36,7 +36,7 @@ main{
 
     .post{
         display: grid;
-        grid-template-columns: 0.9fr 1.1fr;
+        grid-template-columns: 1fr;
         gap: 20px;
         margin-bottom: 30px;
 
@@ -44,6 +44,12 @@ main{
             h2{
                 margin: 0;
                 font-size: 1.3rem;
+            }
+
+            a{
+                text-decoration: none;
+                cursor: pointer;
+                color: inherit;
             }
 
             .info{
@@ -64,6 +70,12 @@ main{
                 line-height: 1.5rem;
                 font-size: 0.9rem;
             }
+        }
+    }
+
+    @media screen and (min-width: 768px){
+        .post{
+            grid-template-columns: 0.9fr 1.1fr;
         }
     }
 
@@ -109,6 +121,76 @@ main{
         margin-top: 10px;
         font-weight: bold;
         font-size: 1rem;
+    }
+
+    .post-details{
+        .image{
+            max-height: 200px;
+            display: flex;
+            overflow: hidden;
+
+            img{
+                object-fit: cover;
+                object-position: center center;
+                width: 100%;
+            }
+        }
+
+        time{
+            color: #888;
+            font-weight: bold;
+            font-size: 0.8rem;
+            display: block;
+            text-align: center;
+        }
+
+        h1{
+            padding: 5px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .author{
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .content{
+            line-height: 1.5rem;
+
+            a{
+                text-decoration: underline;
+                color: #333;
+            }
+        }
+
+        .edit-row{
+            text-align: center;
+
+            .edit-btn{
+                color: #eee;
+                display: inline-flex;
+                align-items: center;
+                padding: 10px 30px;
+                margin-bottom: 20px;
+                background-color: #333;
+                text-decoration: none;
+                gap: 5px;
+                font-weight: bold;
+                font-size: 0.8rem;
+                border-radius: 10px;
+                cursor: pointer;
+                
+                svg{
+                    height: 1.5rem;
+                }
+            }
+        }
+
+
     }
 
 }

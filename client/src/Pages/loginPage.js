@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom";
-import { UserContest } from "../UserContext";
+import { UserContext } from "../UserContext";
 
 export default function Login(){
 
@@ -8,7 +8,7 @@ export default function Login(){
     const [password,setPassword] = useState('');
     const [redirect,setRedirect] = useState(false);
     const [error,setError] = useState(false);
-    const { setUserInfo } = useContext(UserContest);
+    const { setUserInfo } = useContext(UserContext);
 
     const Login = async (e) => {
         e.preventDefault();
