@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const user = require('./models/user');
 const post = require('./models/post');
+const { port,username_mongo,password_mongo } = require('./config/config');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -19,7 +20,7 @@ app.use(cors({credentials:true,origin:'http://localhost:3000'}));
 app.use(express.json());
 app.use(cookieParser());
 
-mongoose.connect('mongodb+srv://blog:3PqCjgTIfOaUvKJ9@blog.0nkw04p.mongodb.net/?retryWrites=true&w=majority')
+mongoose.connect(`mongodb+srv://${username_mongo}:${password_mongo}@blog.0nkw04p.mongodb.net/?retryWrites=true&w=majority`)
 
 app.post('/register', async (req,res) => {
     try{
@@ -88,9 +89,4 @@ app.post('/post' , uploadMiddleware.single('file') , async (req,res) => {
     res.json({PostDoc})
 })
 
-app.listen(4000);
-
-//mongodb+srv://blog:<3PqCjgTIfOaUvKJ9>@blog.0nkw04p.mongodb.net/?retryWrites=true&w=majority
-
-//blog
-//3PqCjgTIfOaUvKJ9
+app.listen(port);
