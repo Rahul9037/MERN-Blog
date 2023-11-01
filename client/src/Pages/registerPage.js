@@ -7,7 +7,7 @@ export default function Register(){
 
     const Register = async (e) => {
         e.preventDefault();
-        let response = await fetch('http://localhost:4000/register' , {
+        let response = await fetch('http://localhost:4000/api/register' , {
             method: 'POST',
             body: JSON.stringify({username,password}),
             headers: { 'Content-Type': 'application/json'}

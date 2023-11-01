@@ -11,7 +11,7 @@ export default function PostPage(){
 
 
     useEffect( () => {
-        fetch(`http://localhost:4000/post/${id}`)
+        fetch(`http://localhost:4000/api/post/${id}`)
         .then(resp => resp.json())
         .then(post => setPostDetails(post));
     },[])

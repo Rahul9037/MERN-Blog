@@ -7,18 +7,24 @@ export default function Header(){
     const {setUserInfo, userInfo } = useContext(UserContext);
 
     useEffect(() => {
-        fetch('http://localhost:4000/profile' , {
-            credentials: 'include'
-        })
-        .then(resp => resp.json())
-        .then(userInfo => setUserInfo(userInfo))
+        let token = sessionStorage.getItem('accessToken');
+        if(token){
+            const headers = { 'Authorization': `Bearer ${token}` };
+            fetch('http://localhost:4000/api/profile' , {
+                headers,
+                //credentials: 'include'
+            })
+            .then(resp => resp.json())
+            .then(userInfo => { console.log("userInfo",userInfo); setUserInfo(userInfo)})
+        }
     },[])
 
     const logout = () => {
-        fetch('http://localhost:4000/logout' , {
-            credentials: 'include',
+        fetch('http://localhost:4000/api/logout' , {
+            //credentials: 'include',
             method: 'POST'
         })
+        sessionStorage.clear();
         setUserInfo(null)
     }
 

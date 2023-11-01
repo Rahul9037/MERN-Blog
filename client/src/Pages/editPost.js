@@ -12,7 +12,7 @@ export default function EditPost(){
     const { id } = useParams();
 
     useEffect( () => {
-        fetch(`http://localhost:4000/post/${id}`)
+        fetch(`http://localhost:4000/api/post/${id}`)
         .then(resp => resp.json())
         .then(post => {
             setTitle(post.title);
@@ -31,14 +31,21 @@ export default function EditPost(){
             data.set('file', files?.[0]);
         }
         data.set('content', content);
-
-        const response = await fetch('http://localhost:4000/post' , {
-            method: 'PUT',
-            body: data,
-            credentials:'include'
-        })
-        if(response.ok){
-            setRedirect(true);
+        let token = sessionStorage.getItem('accessToken');
+        if(token){
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const response = await fetch('http://localhost:4000/api/post' , {
+                method: 'PUT',
+                body: data,
+                //credentials:'include'
+                headers,
+            })
+            if(response.ok){
+                setRedirect(true);
+            }
+            else{
+                setRedirect(false);
+            }
         }
         else{
             setRedirect(false);

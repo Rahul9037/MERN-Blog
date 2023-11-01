@@ -12,16 +12,17 @@ export default function Login(){
 
     const Login = async (e) => {
         e.preventDefault();
-        let response = await fetch('http://localhost:4000/login' , {
+        let response = await fetch('http://localhost:4000/api/login' , {
             method: 'POST',
             body: JSON.stringify({username,password}),
-            headers: { 'Content-Type': 'application/json'},
-            credentials: 'include'
+            headers: { 'Content-Type': 'application/json'}
         })
         if(response.status == 200){
-            let userDetails = await response.json();
-            setUserInfo(userDetails);
-            setRedirect(true)
+
+            let {accessToken, username, id} = await response.json();
+            sessionStorage.setItem("accessToken",accessToken);
+            setUserInfo({username, id});
+            setRedirect(true);
         }
         else{
             let error = await response.json();

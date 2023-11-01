@@ -17,18 +17,26 @@ export default function CreatePost(){
         data.set('summary', summary);
         data.set('file', files[0]);
         data.set('content', content);
-
-        const response = await fetch('http://localhost:4000/post' , {
-            method: 'POST',
-            body: data,
-            credentials:'include'
-        })
-        if(response.ok){
-            setRedirect(true);
+        let token = sessionStorage.getItem('accessToken');
+        if(token){
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const response = await fetch('http://localhost:4000/api/post' , {
+                method: 'POST',
+                body: data,
+                headers,
+                //credentials: 'include' --- for sending the tokenin cookies
+            })
+            if(response.ok){
+                setRedirect(true);
+            }
+            else{
+                setRedirect(false);
+            }
         }
         else{
             setRedirect(false);
         }
+        
     }   
     
     if(redirect){
